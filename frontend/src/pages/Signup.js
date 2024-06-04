@@ -1,7 +1,6 @@
-// Signup.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../utils/api';
+import api from '../utils/api';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -116,5 +115,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
-

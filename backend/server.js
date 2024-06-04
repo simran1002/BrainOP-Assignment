@@ -1,24 +1,18 @@
 const express = require('express');
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/auth');
-const postRoutes = require('./routes/posts');
-const errorHandler = require('./middlewares/errorHandler');
-const cors = require('cors');
-const dotenv = require('dotenv');
-
-dotenv.config();
-
 const app = express();
+const cors = require('cors');
 
+// Connect Database
 connectDB();
 
+// Init Middleware
 app.use(cors());
-app.use(express.json({ extended: false }));
+app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api', require('./routes/posts'));
-
-app.use(errorHandler);
+// Define Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/posts', require('./routes/posts'));
 
 const PORT = process.env.PORT || 5000;
 
