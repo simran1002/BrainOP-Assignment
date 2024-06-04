@@ -1,19 +1,28 @@
+// routes/posts.js
 const express = require('express');
-const postController = require('../controllers/postController');
-const authMiddleware = require('../middlewares/authMiddleware');
-
 const router = express.Router();
+const Post = require('../models/Post'); // Make sure the path is correct
 
-const Post = require('../models/Post');
+// Endpoint to get posts with pagination
+router.get('/posts', async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
 
-// GET /api/posts
-router.get('/', async (req, res) => {
   try {
-    const posts = await Post.find();
-    res.json(posts);
+    const posts = await Post.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await Post.countDocuments();
+
+    res.json({
+      posts,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send('Server error');
   }
 });
 

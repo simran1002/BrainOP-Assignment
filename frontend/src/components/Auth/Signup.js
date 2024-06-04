@@ -1,6 +1,7 @@
+// Signup.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
+import api from '../../utils/api';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -36,8 +37,6 @@ const Signup = () => {
     }
   };
 
-
-  
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl mb-4">Sign Up</h2>
@@ -117,3 +116,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
+

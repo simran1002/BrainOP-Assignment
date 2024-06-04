@@ -1,42 +1,39 @@
-// App.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useCallback } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import api from './utils/api';
 import Post from './Post';
 
 const App = () => {
   const [posts, setPosts] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchPosts = useCallback(async () => {
+    try {
+      const res = await api.get(`/posts?page=${page}`);
+      const newPosts = res.data.posts;
+      setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+      setHasMore(page < res.data.totalPages);
+    } catch (err) {
+      console.error('Error fetching posts: ', err);
+    }
+  }, [page]);
 
   useEffect(() => {
     fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    try {
-      const response = await axios.get(`/api/posts?page=${page}`);
-      const newPosts = response.data;
-      setPosts(prevPosts => [...prevPosts, ...newPosts]);
-      setPage(prevPage => prevPage + 1);
-      setHasMore(newPosts.length > 0);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
-  };
+  }, [fetchPosts]);
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">MelodyVerse</h1>
       <InfiniteScroll
         dataLength={posts.length}
-        next={fetchPosts}
+        next={() => setPage((prevPage) => prevPage + 1)}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
-        endMessage={<p>No more posts to load.</p>}
       >
-        {posts.map(post => (
-          <Post key={post.id} post={post} />
+        {posts.map((post) => (
+          <Post key={post._id} post={post} />
         ))}
       </InfiniteScroll>
     </div>
